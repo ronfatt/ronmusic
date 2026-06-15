@@ -1,5 +1,5 @@
 import type { Album, AlbumWithSongs, Inquiry, Song } from "@/lib/types";
-import { getSupabaseServerClient, hasSupabaseEnv } from "./server";
+import { getSupabaseServerClient, getSupabaseServiceClient, hasSupabaseEnv } from "./server";
 
 export const demoSongs: Song[] = [
   {
@@ -118,7 +118,7 @@ export async function getAlbumBySlug(slug: string) {
 }
 
 export async function getAdminSongs() {
-  const supabase = await getSupabaseServerClient();
+  const supabase = getSupabaseServiceClient();
   if (!supabase) return [];
   const { data, error } = await supabase.from("songs").select("*").order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -126,7 +126,7 @@ export async function getAdminSongs() {
 }
 
 export async function getAdminAlbums() {
-  const supabase = await getSupabaseServerClient();
+  const supabase = getSupabaseServiceClient();
   if (!supabase) return [];
   const { data, error } = await supabase.from("albums").select("*").order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -134,7 +134,7 @@ export async function getAdminAlbums() {
 }
 
 export async function getInquiries() {
-  const supabase = await getSupabaseServerClient();
+  const supabase = getSupabaseServiceClient();
   if (!supabase) return [];
   const { data, error } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
   if (error) throw new Error(error.message);

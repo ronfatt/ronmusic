@@ -64,8 +64,9 @@ export async function createSong(formData: FormData) {
   const cover_url = await uploadFile("covers", formData.get("cover") as File | null);
   const audio_url = await uploadFile("audio", formData.get("audio") as File | null);
   const { generated_cover_url: generatedCoverUrl, cover_prompt: _coverPrompt, ai_notes: _aiNotes, ...songPayload } = parsed;
+  const songsTable = supabase.from("songs") as any;
 
-  const { error } = await supabase.from("songs").insert({
+  const { error } = await songsTable.insert({
     ...songPayload,
     slug: parsed.slug || slugify(parsed.title),
     cover_url: cover_url || generatedCoverUrl || null,
@@ -85,6 +86,7 @@ export async function updateSong(id: string, formData: FormData) {
   const cover_url = await uploadFile("covers", formData.get("cover") as File | null);
   const audio_url = await uploadFile("audio", formData.get("audio") as File | null);
   const { generated_cover_url: generatedCoverUrl, cover_prompt: _coverPrompt, ai_notes: _aiNotes, ...songPayload } = parsed;
+  const songsTable = supabase.from("songs") as any;
 
   const payload = {
     ...songPayload,
@@ -94,7 +96,7 @@ export async function updateSong(id: string, formData: FormData) {
     ...(audio_url ? { audio_url } : {})
   };
 
-  const { error } = await supabase.from("songs").update(payload).eq("id", id);
+  const { error } = await songsTable.update(payload).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/");
   revalidatePath("/music");
@@ -103,7 +105,8 @@ export async function updateSong(id: string, formData: FormData) {
 
 export async function deleteSong(id: string) {
   const { supabase } = await requireAdmin();
-  const { error } = await supabase.from("songs").delete().eq("id", id);
+  const songsTable = supabase.from("songs") as any;
+  const { error } = await songsTable.delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/");
   revalidatePath("/music");
@@ -113,7 +116,8 @@ export async function createAlbum(formData: FormData) {
   const { supabase } = await requireAdmin();
   const parsed = albumSchema.parse(Object.fromEntries(formData));
   const cover_url = await uploadFile("covers", formData.get("cover") as File | null);
-  const { error } = await supabase.from("albums").insert({
+  const albumsTable = supabase.from("albums") as any;
+  const { error } = await albumsTable.insert({
     ...parsed,
     slug: parsed.slug || slugify(parsed.title),
     cover_url,
@@ -128,7 +132,8 @@ export async function assignSongToAlbum(formData: FormData) {
   const album_id = String(formData.get("album_id"));
   const song_id = String(formData.get("song_id"));
   const track_number = Number(formData.get("track_number") || 1);
-  const { error } = await supabase.from("song_albums").upsert({ album_id, song_id, track_number }, { onConflict: "song_id,album_id" });
+  const songAlbumsTable = supabase.from("song_albums") as any;
+  const { error } = await songAlbumsTable.upsert({ album_id, song_id, track_number }, { onConflict: "song_id,album_id" });
   if (error) throw new Error(error.message);
   revalidatePath("/albums");
   revalidatePath("/admin/albums");

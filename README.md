@@ -38,6 +38,7 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 OPENAI_API_KEY=your-openai-api-key
 OPENAI_TEXT_MODEL=gpt-5.5
 OPENAI_IMAGE_MODEL=gpt-image-1
+ADMIN_EMAILS=ronfatt@gmail.com
 ```
 
 The service role key is used only on the server for play count updates and admin-safe operations. Never expose it in client components.
@@ -75,21 +76,14 @@ The SQL file includes policies so public users can read files and authenticated 
 
 1. Go to **Authentication > Users** in Supabase.
 2. Create a user with email and password.
-3. Copy the user's UUID.
-4. Insert the user into the admin whitelist:
-
-```sql
-insert into public.admin_users (id, email)
-values ('AUTH_USER_UUID_HERE', 'admin@example.com');
-```
-
-5. Use that account at:
+3. Add the email to `ADMIN_EMAILS` in `.env.local` and Vercel environment variables.
+4. Use that account at:
 
 ```text
 /admin/login
 ```
 
-Only users listed in `public.admin_users` can access the protected dashboard or write to songs, albums, inquiries, and storage.
+Only emails listed in `ADMIN_EMAILS` can access the protected dashboard. Separate multiple admin emails with commas.
 
 ## Run Locally
 
@@ -127,6 +121,7 @@ npm run build
    - `OPENAI_API_KEY`
    - `OPENAI_TEXT_MODEL`
    - `OPENAI_IMAGE_MODEL`
+   - `ADMIN_EMAILS`
 4. Deploy.
 
 ## Admin AI Song Assistant
@@ -192,7 +187,7 @@ supabase
 
 - Public pages show demo content if Supabase environment variables are not configured.
 - Admin pages require Supabase Auth.
-- Admin access also requires the authenticated user's UUID to exist in `public.admin_users`.
+- Admin access also requires the authenticated user's email to be listed in `ADMIN_EMAILS`.
 - Audio playback is handled by a persistent bottom mini-player in the root layout.
 - Play count increments through `POST /api/songs/[id]/play`.
 - Contact forms include server-side validation and a hidden honeypot field for basic spam reduction.
