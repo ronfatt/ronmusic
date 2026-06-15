@@ -1,0 +1,45 @@
+import type { Song } from "@/lib/types";
+import { AdminSongAssistant } from "@/components/admin/AdminSongAssistant";
+import { Button } from "@/components/ui/Button";
+
+export function SongForm({ action, song }: { action: (formData: FormData) => void; song?: Song }) {
+  return (
+    <form action={action} className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.04] p-5">
+      <div className="grid gap-5 md:grid-cols-2">
+        <input name="title" defaultValue={song?.title} placeholder="Song title" required maxLength={140} className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
+        <input name="slug" defaultValue={song?.slug} placeholder="slug-auto-if-empty" className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
+        <select name="language" defaultValue={song?.language || "English"} className="h-12 rounded-lg border border-white/10 bg-ink px-4">
+          {["Chinese", "English", "Malay", "Instrumental"].map((item) => <option key={item}>{item}</option>)}
+        </select>
+        <select name="genre" defaultValue={song?.genre || "Cinematic"} className="h-12 rounded-lg border border-white/10 bg-ink px-4">
+          {["Worship", "Rock", "Cinematic", "World Music", "Pop Ballad", "AI-assisted", "Instrumental"].map((item) => <option key={item}>{item}</option>)}
+        </select>
+        <input name="release_date" type="date" defaultValue={song?.release_date || ""} className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
+        <select name="status" defaultValue={song?.status || "draft"} className="h-12 rounded-lg border border-white/10 bg-ink px-4">
+          <option>draft</option>
+          <option>published</option>
+        </select>
+      </div>
+      <textarea name="description" defaultValue={song?.description || ""} placeholder="Short description" rows={3} maxLength={500} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
+      <textarea name="lyrics" defaultValue={song?.lyrics || ""} placeholder="Lyrics" rows={9} maxLength={20000} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
+      <textarea name="story" defaultValue={song?.story || ""} placeholder="Song story / background" rows={6} maxLength={6000} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
+      <AdminSongAssistant />
+      <input name="youtube_url" defaultValue={song?.youtube_url || ""} placeholder="YouTube / MV URL" className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
+      <div className="grid gap-5 md:grid-cols-2">
+        <label className="text-sm text-pearl/70">
+          Cover image
+          <span className="block text-xs text-pearl/45">JPG, PNG, WebP, or AVIF. Max 8MB.</span>
+          {song?.cover_url ? <a className="mt-1 block text-xs text-electric" href={song.cover_url} target="_blank">Current cover</a> : null}
+          <input name="cover" type="file" accept="image/jpeg,image/png,image/webp,image/avif" className="mt-2 block w-full text-sm" />
+        </label>
+        <label className="text-sm text-pearl/70">
+          Audio file
+          <span className="block text-xs text-pearl/45">MP3, WAV, AAC, MP4 audio, or OGG. Max 50MB.</span>
+          {song?.audio_url ? <a className="mt-1 block text-xs text-electric" href={song.audio_url} target="_blank">Current audio</a> : null}
+          <input name="audio" type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/aac,audio/ogg" className="mt-2 block w-full text-sm" />
+        </label>
+      </div>
+      <Button type="submit" className="w-fit">{song ? "Save song" : "Create song"}</Button>
+    </form>
+  );
+}
