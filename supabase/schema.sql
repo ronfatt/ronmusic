@@ -10,6 +10,13 @@ create table if not exists public.songs (
   description text,
   lyrics text,
   story text,
+  seo_title text,
+  seo_description text,
+  social_caption text,
+  mood_tags text,
+  release_kit jsonb default '{}'::jsonb,
+  translations jsonb default '{}'::jsonb,
+  cover_prompt text,
   cover_url text,
   audio_url text,
   youtube_url text,
@@ -55,6 +62,13 @@ create table if not exists public.admin_users (
   created_at timestamp with time zone default now()
 );
 
+alter table public.songs add column if not exists seo_title text;
+alter table public.songs add column if not exists seo_description text;
+alter table public.songs add column if not exists social_caption text;
+alter table public.songs add column if not exists mood_tags text;
+alter table public.songs add column if not exists release_kit jsonb default '{}'::jsonb;
+alter table public.songs add column if not exists translations jsonb default '{}'::jsonb;
+alter table public.songs add column if not exists cover_prompt text;
 alter table public.inquiries add column if not exists source text default 'website';
 
 create or replace function public.is_admin()

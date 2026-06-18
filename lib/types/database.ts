@@ -10,6 +10,13 @@ export type Song = {
   description: string | null;
   lyrics: string | null;
   story: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  social_caption: string | null;
+  mood_tags: string | null;
+  release_kit: Record<string, unknown> | null;
+  translations: Record<string, unknown> | null;
+  cover_prompt: string | null;
   cover_url: string | null;
   audio_url: string | null;
   youtube_url: string | null;

@@ -19,7 +19,27 @@ function parseJson(text: string) {
     seoTitle: string;
     seoDescription: string;
     socialCaption: string;
-    coverPrompt: string;
+    moodTags: string[];
+    translations: {
+      englishIntro: string;
+      chineseIntro: string;
+      malayIntro: string;
+      poeticEnglishLyrics: string;
+      chineseLyricMeaning: string;
+    };
+    releaseKit: {
+      youtubeTitle: string;
+      youtubeDescription: string;
+      facebookCaption: string;
+      instagramCaption: string;
+      tiktokCaption: string;
+      whatsappShareText: string;
+      licensingPitch: string;
+    };
+    coverDirections: Array<{
+      name: string;
+      prompt: string;
+    }>;
   };
 }
 
@@ -40,7 +60,7 @@ export async function POST(request: Request) {
       {
         role: "system",
         content:
-          "You are the private admin writing assistant for R.ON Music. Write premium, cinematic artist-owned music copy. Do not claim facts not provided. Return only valid JSON."
+          "You are the private admin writing assistant for R.ON Music. Write premium, cinematic artist-owned music copy. Do not claim facts not provided. Return only valid JSON. Keep the artist's ownership and original-work identity central."
       },
       {
         role: "user",
@@ -59,7 +79,10 @@ story: 2-3 paragraphs about the emotional/background story, 120-220 words.
 seoTitle: under 65 characters.
 seoDescription: under 155 characters.
 socialCaption: 1 short launch caption.
-coverPrompt: a detailed square album cover prompt, cinematic dark premium R.ON/RONOVA style, no text, no logos, no readable words.`
+moodTags: 6-10 short lowercase tags.
+translations: object with englishIntro, chineseIntro, malayIntro, poeticEnglishLyrics, chineseLyricMeaning. If lyrics are not provided, keep lyric fields empty strings.
+releaseKit: object with youtubeTitle, youtubeDescription, facebookCaption, instagramCaption, tiktokCaption, whatsappShareText, licensingPitch.
+coverDirections: exactly 3 objects with name and prompt. Directions should be: cinematic, worship/reflection, and dramatic/rock/world. Each prompt must be square album cover art, premium dark R.ON/RONOVA mood, no text, no logos, no readable words.`
       }
     ]
   });

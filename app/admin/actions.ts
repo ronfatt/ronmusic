@@ -12,8 +12,14 @@ const songSchema = z.object({
   language: z.string().optional(),
   genre: z.string().optional(),
   description: z.string().max(500).optional(),
+  seo_title: z.string().max(65).optional(),
+  seo_description: z.string().max(155).optional(),
+  social_caption: z.string().max(500).optional(),
+  mood_tags: z.string().max(500).optional(),
   lyrics: z.string().max(20000).optional(),
   story: z.string().max(6000).optional(),
+  release_kit: z.string().max(12000).optional(),
+  translations: z.string().max(12000).optional(),
   youtube_url: z.string().max(300).optional(),
   generated_cover_url: z.string().url().optional().or(z.literal("")),
   cover_prompt: z.string().max(3000).optional(),
@@ -21,6 +27,11 @@ const songSchema = z.object({
   release_date: z.string().optional(),
   status: z.enum(["draft", "published"])
 });
+
+function parseOptionalJson(value?: string) {
+  if (!value?.trim()) return {};
+  return JSON.parse(value);
+}
 
 const albumSchema = z.object({
   title: z.string().trim().min(1).max(140),
@@ -63,12 +74,15 @@ export async function createSong(formData: FormData) {
   const parsed = songSchema.parse(Object.fromEntries(formData));
   const cover_url = await uploadFile("covers", formData.get("cover") as File | null);
   const audio_url = await uploadFile("audio", formData.get("audio") as File | null);
-  const { generated_cover_url: generatedCoverUrl, cover_prompt: _coverPrompt, ai_notes: _aiNotes, ...songPayload } = parsed;
+  const { generated_cover_url: generatedCoverUrl, cover_prompt: coverPrompt, ai_notes: _aiNotes, release_kit: releaseKit, translations, ...songPayload } = parsed;
   const songsTable = supabase.from("songs") as any;
 
   const { error } = await songsTable.insert({
     ...songPayload,
     slug: parsed.slug || slugify(parsed.title),
+    cover_prompt: coverPrompt || null,
+    release_kit: parseOptionalJson(releaseKit),
+    translations: parseOptionalJson(translations),
     cover_url: cover_url || generatedCoverUrl || null,
     audio_url,
     release_date: parsed.release_date || null
@@ -85,12 +99,15 @@ export async function updateSong(id: string, formData: FormData) {
   const parsed = songSchema.parse(Object.fromEntries(formData));
   const cover_url = await uploadFile("covers", formData.get("cover") as File | null);
   const audio_url = await uploadFile("audio", formData.get("audio") as File | null);
-  const { generated_cover_url: generatedCoverUrl, cover_prompt: _coverPrompt, ai_notes: _aiNotes, ...songPayload } = parsed;
+  const { generated_cover_url: generatedCoverUrl, cover_prompt: coverPrompt, ai_notes: _aiNotes, release_kit: releaseKit, translations, ...songPayload } = parsed;
   const songsTable = supabase.from("songs") as any;
 
   const payload = {
     ...songPayload,
     slug: parsed.slug || slugify(parsed.title),
+    cover_prompt: coverPrompt || null,
+    release_kit: parseOptionalJson(releaseKit),
+    translations: parseOptionalJson(translations),
     release_date: parsed.release_date || null,
     ...(cover_url || generatedCoverUrl ? { cover_url: cover_url || generatedCoverUrl } : {}),
     ...(audio_url ? { audio_url } : {})

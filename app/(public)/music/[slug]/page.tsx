@@ -7,17 +7,22 @@ import { SongCard } from "@/components/music/SongCard";
 import { getPublishedSongs, getSongBySlug } from "@/lib/supabase/queries";
 import { formatDate } from "@/lib/utils/format";
 
+function getStringValue(source: Record<string, unknown> | null | undefined, key: string) {
+  const value = source?.[key];
+  return typeof value === "string" ? value : "";
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const song = await getSongBySlug(slug);
   if (!song) return { title: "Song not found | R.ON Music" };
 
   return {
-    title: `${song.title} | R.ON Music`,
-    description: song.description || song.story || "Original music by R.ON.",
+    title: song.seo_title || `${song.title} | R.ON Music`,
+    description: song.seo_description || song.description || song.story || "Original music by R.ON.",
     openGraph: {
-      title: `${song.title} | R.ON Music`,
-      description: song.description || "Original music by R.ON.",
+      title: song.seo_title || `${song.title} | R.ON Music`,
+      description: song.seo_description || song.description || "Original music by R.ON.",
       images: song.cover_url ? [{ url: song.cover_url }] : undefined,
       type: "music.song"
     }
@@ -32,6 +37,10 @@ export default async function SongDetailPage({ params }: { params: Promise<{ slu
   const related = songs.filter((item) => item.id !== song.id).slice(0, 3);
 
   const youtubeId = song.youtube_url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/)?.[1];
+  const tags = song.mood_tags?.split(",").map((tag) => tag.trim()).filter(Boolean) ?? [];
+  const englishIntro = getStringValue(song.translations, "englishIntro");
+  const chineseIntro = getStringValue(song.translations, "chineseIntro");
+  const malayIntro = getStringValue(song.translations, "malayIntro");
 
   return (
     <article className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -42,6 +51,15 @@ export default async function SongDetailPage({ params }: { params: Promise<{ slu
           <h1 className="mt-4 text-5xl font-black text-pearl md:text-6xl">{song.title}</h1>
           <p className="mt-5 text-lg leading-8 text-pearl/68">{song.description}</p>
           <p className="mt-5 text-sm text-pearl/50">{song.genre} · {song.language} · {formatDate(song.release_date)}</p>
+          {tags.length ? (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span key={tag} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs text-pearl/65">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <div className="mt-8 flex flex-wrap gap-3">
             <PlaySongButton song={song} label="Play song" />
             <ShareButton title={`${song.title} | R.ON Music`} />
@@ -59,6 +77,24 @@ export default async function SongDetailPage({ params }: { params: Promise<{ slu
           <p className="mt-5 leading-8 text-pearl/72">{song.story || "Story notes will be added soon."}</p>
         </section>
       </div>
+
+      {englishIntro || chineseIntro || malayIntro ? (
+        <section className="mt-10 rounded-lg border border-white/10 bg-white/[0.04] p-6">
+          <h2 className="text-2xl font-black text-pearl">Language notes</h2>
+          <div className="mt-5 grid gap-5 md:grid-cols-3">
+            {englishIntro ? <p className="text-sm leading-6 text-pearl/70"><span className="mb-2 block font-bold text-electric">English</span>{englishIntro}</p> : null}
+            {chineseIntro ? <p className="text-sm leading-6 text-pearl/70"><span className="mb-2 block font-bold text-gold">中文</span>{chineseIntro}</p> : null}
+            {malayIntro ? <p className="text-sm leading-6 text-pearl/70"><span className="mb-2 block font-bold text-pearl">Malay</span>{malayIntro}</p> : null}
+          </div>
+        </section>
+      ) : null}
+
+      {song.social_caption ? (
+        <section className="mt-10 rounded-lg border border-gold/20 bg-gold/10 p-6">
+          <p className="text-sm font-bold uppercase tracking-[0.24em] text-gold">Release note</p>
+          <p className="mt-3 text-lg leading-8 text-pearl/78">{song.social_caption}</p>
+        </section>
+      ) : null}
 
       {youtubeId ? (
         <section className="mt-10 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04]">

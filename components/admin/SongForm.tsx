@@ -21,9 +21,17 @@ export function SongForm({ action, song }: { action: (formData: FormData) => voi
         </select>
       </div>
       <textarea name="description" defaultValue={song?.description || ""} placeholder="Short description" rows={3} maxLength={500} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
+      <div className="grid gap-5 md:grid-cols-2">
+        <input name="seo_title" defaultValue={song?.seo_title || ""} placeholder="SEO title" maxLength={65} className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
+        <input name="seo_description" defaultValue={song?.seo_description || ""} placeholder="SEO description" maxLength={155} className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
+      </div>
+      <textarea name="social_caption" defaultValue={song?.social_caption || ""} placeholder="Social launch caption" rows={2} maxLength={500} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
+      <input name="mood_tags" defaultValue={song?.mood_tags || ""} placeholder="Mood tags, comma separated" className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
       <textarea name="lyrics" defaultValue={song?.lyrics || ""} placeholder="Lyrics" rows={9} maxLength={20000} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
       <textarea name="story" defaultValue={song?.story || ""} placeholder="Song story / background" rows={6} maxLength={6000} className="rounded-lg border border-white/10 bg-ink px-4 py-3" />
       <AdminSongAssistant />
+      <textarea name="release_kit" defaultValue={song?.release_kit ? JSON.stringify(song.release_kit, null, 2) : ""} placeholder="Release kit JSON" rows={6} className="rounded-lg border border-white/10 bg-ink px-4 py-3 font-mono text-xs" />
+      <textarea name="translations" defaultValue={song?.translations ? JSON.stringify(song.translations, null, 2) : ""} placeholder="Translations JSON" rows={6} className="rounded-lg border border-white/10 bg-ink px-4 py-3 font-mono text-xs" />
       <input name="youtube_url" defaultValue={song?.youtube_url || ""} placeholder="YouTube / MV URL" className="h-12 rounded-lg border border-white/10 bg-ink px-4" />
       <div className="grid gap-5 md:grid-cols-2">
         <label className="text-sm text-pearl/70">

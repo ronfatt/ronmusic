@@ -21,7 +21,8 @@ export async function POST(request: Request) {
   const image = await openai.images.generate({
     model: openAIImageModel,
     prompt: `${payload.data.prompt}\n\nSquare music cover art. No text, no logo, no readable typography.`,
-    size: "1024x1024"
+    size: "1024x1024",
+    quality: "high"
   });
 
   const b64 = image.data?.[0]?.b64_json;

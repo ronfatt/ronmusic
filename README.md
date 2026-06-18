@@ -134,18 +134,22 @@ It can:
 - Draft a longer song `story`
 - Suggest SEO title and SEO description
 - Suggest a social launch caption
-- Generate an editable cover prompt
+- Generate mood tags
+- Generate multilingual intro notes and lyric translation helpers
+- Generate a release kit for YouTube, Facebook, Instagram, TikTok, WhatsApp, and licensing
+- Generate three editable cover directions
 - Generate a square cover image and upload it to the Supabase `covers` bucket
 
 Workflow:
 
 1. Enter song title, language, genre, lyrics, and optional AI notes.
 2. Click **Generate copy**.
-3. Review and edit the generated description, story, and cover prompt.
-4. Click **Generate cover** if you want AI cover art.
-5. Submit the song form to save the generated cover URL with the song.
+3. Review and edit the generated description, story, SEO fields, mood tags, translations, release kit, and cover directions.
+4. Choose a cover direction or edit the cover prompt.
+5. Click **Generate cover** if you want AI cover art.
+6. Submit the song form to save the generated metadata and cover URL with the song.
 
-AI routes are protected by the same `admin_users` whitelist as the rest of the admin dashboard.
+AI routes are protected by the same `ADMIN_EMAILS` whitelist as the rest of the admin dashboard.
 
 ## Project Structure
 

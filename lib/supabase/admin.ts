@@ -1,11 +1,15 @@
 import { redirect } from "next/navigation";
 import { getSupabaseServerClient, getSupabaseServiceClient } from "./server";
 
+const defaultAdminEmails = ["ronfatt@gmail.com"];
+
 function getAdminEmails() {
-  return (process.env.ADMIN_EMAILS || "")
+  const configuredEmails = (process.env.ADMIN_EMAILS || "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
+
+  return Array.from(new Set([...configuredEmails, ...defaultAdminEmails]));
 }
 
 export async function requireAdmin() {
