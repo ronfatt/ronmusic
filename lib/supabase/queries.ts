@@ -1,6 +1,10 @@
 import type { Album, AlbumWithSongs, Inquiry, Song } from "@/lib/types";
 import { getSupabaseServerClient, getSupabaseServiceClient, hasSupabaseEnv } from "./server";
 
+function isMissingTableError(error: { code?: string; message?: string } | null) {
+  return error?.code === "PGRST205" || /could not find the table|relation .* does not exist/i.test(error?.message ?? "");
+}
+
 export const demoSongs: Song[] = [
   {
     id: "demo-1",
@@ -81,7 +85,7 @@ export async function getPublishedSongs() {
     .order("release_date", { ascending: false });
 
   if (error) {
-    console.error("Failed to load songs", error);
+    if (isMissingTableError(error)) return demoSongs;
     return [];
   }
 
@@ -113,7 +117,7 @@ export async function getAlbums() {
     .order("release_date", { ascending: false });
 
   if (error) {
-    console.error("Failed to load albums", error);
+    if (isMissingTableError(error)) return demoAlbums;
     return [];
   }
 
@@ -135,7 +139,7 @@ export async function getAdminSongs() {
   const supabase = getSupabaseServiceClient();
   if (!supabase) return [];
   const { data, error } = await supabase.from("songs").select("*").order("created_at", { ascending: false });
-  if (error) throw new Error(error.message);
+  if (error) return [];
   return (data ?? []) as Song[];
 }
 
@@ -143,7 +147,7 @@ export async function getAdminAlbums() {
   const supabase = getSupabaseServiceClient();
   if (!supabase) return [];
   const { data, error } = await supabase.from("albums").select("*").order("created_at", { ascending: false });
-  if (error) throw new Error(error.message);
+  if (error) return [];
   return (data ?? []) as Album[];
 }
 
@@ -151,6 +155,6 @@ export async function getInquiries() {
   const supabase = getSupabaseServiceClient();
   if (!supabase) return [];
   const { data, error } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
-  if (error) throw new Error(error.message);
+  if (error) return [];
   return (data ?? []) as Inquiry[];
 }
