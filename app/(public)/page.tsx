@@ -52,7 +52,19 @@ export default async function HomePage() {
               <div className="mt-7"><PlaySongButton song={latest} label="Play latest song" /></div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="rounded-lg border border-electric/20 bg-electric/10 p-8 shadow-glow md:p-10">
+            <p className="text-sm font-bold uppercase tracking-[0.26em] text-electric">Featured latest song</p>
+            <h2 className="mt-4 text-4xl font-black text-pearl md:text-5xl">The first R.ON release is coming.</h2>
+            <p className="mt-4 max-w-2xl text-pearl/68">
+              This official music universe is ready for original songs, lyrics, stories, covers, and MV links. The latest published song will appear here first.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <ButtonLink href="/music" variant="secondary">Open music library</ButtonLink>
+              <ButtonLink href="/artist" variant="ghost">Read artist story</ButtonLink>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
@@ -64,7 +76,16 @@ export default async function HomePage() {
           <Link href="/music" className="text-sm font-semibold text-gold hover:text-pearl">View library</Link>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {songs.slice(0, 4).map((song) => <SongCard key={song.id} song={song} />)}
+          {songs.length > 0 ? (
+            songs.slice(0, 4).map((song) => <SongCard key={song.id} song={song} />)
+          ) : (
+            <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6 sm:col-span-2 lg:col-span-4">
+              <p className="text-lg font-bold text-pearl">No public releases yet.</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-pearl/62">
+                Upload and publish the first song from the admin dashboard to turn this section into the official release shelf.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -94,13 +115,22 @@ export default async function HomePage() {
           <ButtonLink href="/contact" variant="secondary" className="gap-2"><Mail size={16} /> Booking</ButtonLink>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
-          {albums.slice(0, 3).map((album) => (
-            <Link key={album.id} href={`/albums/${album.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.04] p-4 transition hover:border-gold/40">
-              <Image src={album.cover_url || "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=80"} alt={`${album.title} cover`} width={720} height={720} className="aspect-square w-full rounded-lg object-cover transition group-hover:scale-[1.02]" />
-              <h3 className="mt-4 text-xl font-bold text-pearl">{album.title}</h3>
-              <p className="mt-2 line-clamp-2 text-sm text-pearl/60">{album.description}</p>
-            </Link>
-          ))}
+          {albums.length > 0 ? (
+            albums.slice(0, 3).map((album) => (
+              <Link key={album.id} href={`/albums/${album.slug}`} className="group rounded-lg border border-white/10 bg-white/[0.04] p-4 transition hover:border-gold/40">
+                <Image src={album.cover_url || "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=80"} alt={`${album.title} cover`} width={720} height={720} className="aspect-square w-full rounded-lg object-cover transition group-hover:scale-[1.02]" />
+                <h3 className="mt-4 text-xl font-bold text-pearl">{album.title}</h3>
+                <p className="mt-2 line-clamp-2 text-sm text-pearl/60">{album.description}</p>
+              </Link>
+            ))
+          ) : (
+            <div className="rounded-lg border border-white/10 bg-white/[0.04] p-6 md:col-span-3">
+              <p className="text-lg font-bold text-pearl">Albums and EPs will live here.</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-pearl/62">
+                Create a collection in admin, assign songs, and this area becomes the curated R.ON catalog.
+              </p>
+            </div>
+          )}
         </div>
         <div className="mt-14 rounded-lg border border-electric/20 bg-electric/10 p-6">
           <Sparkles className="text-electric" />

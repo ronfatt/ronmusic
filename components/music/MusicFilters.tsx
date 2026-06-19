@@ -12,6 +12,7 @@ export function MusicFilters({ songs }: { songs: Song[] }) {
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("All");
   const [genre, setGenre] = useState("All");
+  const hasSongs = songs.length > 0;
 
   const filtered = useMemo(() => {
     const needle = query.toLowerCase().trim();
@@ -55,6 +56,11 @@ export function MusicFilters({ songs }: { songs: Song[] }) {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((song) => <SongCard key={song.id} song={song} />)}
         </div>
+      ) : !hasSongs ? (
+        <EmptyState
+          title="First releases coming soon"
+          message="R.ON Music is ready for the official catalog. Once the first published song is uploaded, it will appear here with lyrics, story, cover art, and playback."
+        />
       ) : (
         <EmptyState title="No songs found" message="Try another title, language, or genre filter." />
       )}

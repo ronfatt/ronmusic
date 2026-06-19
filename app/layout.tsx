@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const songs = await getPublishedSongs();
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={inter.className}>
         <AudioPlayerProvider initialSongs={songs}>
           {children}

@@ -16,9 +16,9 @@ export default async function DashboardPage() {
       <h1 className="text-3xl font-black">Dashboard overview</h1>
       {isEmptySetup ? (
         <div className="mt-6 rounded-lg border border-gold/25 bg-gold/10 p-5">
-          <p className="font-bold text-gold">Supabase content tables look empty or not initialized yet.</p>
+          <p className="font-bold text-gold">R.ON Music is ready for the first upload.</p>
           <p className="mt-2 text-sm leading-6 text-pearl/70">
-            If this is a new project, run <span className="font-mono text-pearl">supabase/schema.sql</span> in the Supabase SQL Editor, then create the <span className="font-mono text-pearl">audio</span> and <span className="font-mono text-pearl">covers</span> storage buckets.
+            Songs, albums, and inquiries are currently empty. Start by creating a published song with audio, cover art, lyrics, and a story.
           </p>
         </div>
       ) : null}
