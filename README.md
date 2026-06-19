@@ -140,6 +140,30 @@ It can:
 - Generate three editable cover directions
 - Generate a square cover image and upload it to the Supabase `covers` bucket
 
+## Admin Publishing Workflow
+
+The song create/edit page is organized as a publishing workflow:
+
+1. Add song identity: title, slug, language, genre, release date, and status.
+2. Add lyrics and story, then use the AI assistant to draft description, SEO copy, social caption, release kit, translations, and cover prompt.
+3. Upload cover image and audio file.
+4. Check the publish readiness panel.
+5. Use the admin preview page before publishing.
+
+Draft songs can be previewed at:
+
+```text
+/admin/songs/[id]/preview
+```
+
+Published songs also link to their public page at:
+
+```text
+/music/[slug]
+```
+
+Contact inquiries can be managed with `new`, `replied`, `booked`, and `archived` statuses plus internal admin notes. If upgrading an existing Supabase project, rerun `supabase/schema.sql` so the `inquiries.status` and `inquiries.admin_notes` columns are added.
+
 Workflow:
 
 1. Enter song title, language, genre, lyrics, and optional AI notes.
@@ -170,6 +194,7 @@ app
     songs/page.tsx
     songs/new/page.tsx
     songs/[id]/edit/page.tsx
+    songs/[id]/preview/page.tsx
     albums/page.tsx
     inquiries/page.tsx
 components

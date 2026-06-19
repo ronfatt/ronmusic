@@ -56,5 +56,7 @@ export type Inquiry = {
   inquiry_type: string | null;
   message: string;
   source: string | null;
+  status?: "new" | "replied" | "booked" | "archived" | null;
+  admin_notes?: string | null;
   created_at: string;
 };

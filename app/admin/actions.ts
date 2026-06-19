@@ -40,6 +40,11 @@ const albumSchema = z.object({
   release_date: z.string().optional()
 });
 
+const inquirySchema = z.object({
+  status: z.enum(["new", "replied", "booked", "archived"]),
+  admin_notes: z.string().max(2000).optional()
+});
+
 const uploadRules = {
   audio: {
     maxSize: 50 * 1024 * 1024,
@@ -154,4 +159,20 @@ export async function assignSongToAlbum(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/albums");
   revalidatePath("/admin/albums");
+}
+
+export async function updateInquiry(id: string, formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const parsed = inquirySchema.parse(Object.fromEntries(formData));
+  const inquiriesTable = supabase.from("inquiries") as any;
+  const { error } = await inquiriesTable
+    .update({
+      status: parsed.status,
+      admin_notes: parsed.admin_notes || null
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/inquiries");
+  revalidatePath("/admin/dashboard");
 }

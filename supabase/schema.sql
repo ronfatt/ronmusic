@@ -53,6 +53,8 @@ create table if not exists public.inquiries (
   inquiry_type text,
   message text not null,
   source text default 'website',
+  status text default 'new' check (status in ('new', 'replied', 'booked', 'archived')),
+  admin_notes text,
   created_at timestamp with time zone default now()
 );
 
@@ -70,6 +72,17 @@ alter table public.songs add column if not exists release_kit jsonb default '{}'
 alter table public.songs add column if not exists translations jsonb default '{}'::jsonb;
 alter table public.songs add column if not exists cover_prompt text;
 alter table public.inquiries add column if not exists source text default 'website';
+alter table public.inquiries add column if not exists status text default 'new';
+alter table public.inquiries add column if not exists admin_notes text;
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'inquiries_status_check'
+  ) then
+    alter table public.inquiries
+    add constraint inquiries_status_check check (status in ('new', 'replied', 'booked', 'archived'));
+  end if;
+end $$;
 
 create or replace function public.is_admin()
 returns boolean
@@ -169,6 +182,13 @@ create policy "Admins can view inquiries"
 on public.inquiries for select
 to authenticated
 using (public.is_admin());
+
+drop policy if exists "Admins can update inquiries" on public.inquiries;
+create policy "Admins can update inquiries"
+on public.inquiries for update
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
 
 drop policy if exists "Admins can view admin users" on public.admin_users;
 create policy "Admins can view admin users"
